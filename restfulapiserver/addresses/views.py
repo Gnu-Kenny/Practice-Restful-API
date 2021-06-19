@@ -36,9 +36,6 @@ def address_detail(request, pk, format=None):
     except Addresses.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == 'GET':
-        print("test_address_detail")
-        # single_address = Addresses.objects.filter(pk=pk)
-        # print(single_address)
-        # serializer = AddressesSerializer(single_address, many=True)  # json 형태로
+
         serializer = AddressesSerializer(address)
         return JsonResponse(serializer.data)
