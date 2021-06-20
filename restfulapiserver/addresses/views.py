@@ -13,7 +13,6 @@ from rest_framework.response import Response
 @csrf_exempt
 def address_list(request, format=None):
     if request.method == 'GET':
-        print("test_address_list")
         query_set = Addresses.objects.all()  # 테이블 내 튜플 모두 조회 - QuerySet
         serializer = AddressesSerializer(query_set, many=True)  # json 형태로
 
@@ -57,3 +56,28 @@ def address_detail(request, pk, format=None):
     elif request.method == 'DELETE':
         address.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+@csrf_exempt
+def login(request, format=None):
+
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        requested_name = data['name']
+
+        obj = Addresses.objects.get(name=requested_name)
+
+        if data['phone_number'] == obj.phone_number:
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=400)
+        # data = JSONParser().parse(request)
+        # serializer = LoginSerializer(data=data)
+        # if serializer.is_valid():
+        # requested_name = serializer.data['name']
+        # requested_phone_number = serializer.data['phone_number']
+        #     if Addresses.objects.filter(name=requested_name, phone_number=requested_phone_number) is not None:
+        #         return HttpResponse(status=status.HTTP_200_OK)
+        #     return JsonResponse(serializer.data, status=202)
+
+        # return JsonResponse(serializer.error, status=400)
