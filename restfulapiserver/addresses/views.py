@@ -32,10 +32,28 @@ def address_list(request, format=None):
 @csrf_exempt
 def address_detail(request, pk, format=None):
     try:
+        # 전자 pk는 모델에서 정한 포맷 후자 pk는 request
         address = Addresses.objects.get(pk=pk)
     except Addresses.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    if request.method == 'GET':
 
+    if request.method == 'GET':
         serializer = AddressesSerializer(address)
         return JsonResponse(serializer.data)
+
+    elif request.method == 'PUT':
+
+        data = JSONParser().parse(request)  # JSON의 형식으로 request가 들어옴.
+
+        # 전자의 data는 Serializer에서 만든 포맷
+        # 어떤 pk에 관한 하나의 튜플, JSON형식의 request
+        serializer = AddressesSerializer(address, data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        address.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
