@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Addresses
+from .models import User
 
 # data를 JSON 형태로 바꿔줌
 # serializers.Serializer vs serializers.ModelSerializer
@@ -7,13 +7,7 @@ from .models import Addresses
 # 후자는 Meta 클래스에서 import 시킨 모델(테이블)명을 입력하면 일일이 필드 값 입력없이 전체를 불러온 것처럼 사용할 수 있다.
 
 
-class AddressesSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Addresses
-        fields = ['name', 'phone_number', 'address', 'created']
-
-
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['username', 'email', 'password']
+        model = User
+        fields = ['id', 'username', 'password']

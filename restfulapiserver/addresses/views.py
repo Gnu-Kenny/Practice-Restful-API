@@ -1,3 +1,5 @@
+from codecs import decode
+from typing import Sequence
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser
@@ -8,6 +10,11 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
 from rest_framework.response import Response
 # Http 통신: request / response
+
+# JWT to login
+import jwt
+import datetime
+from django.contrib.auth import authenticate
 
 
 @csrf_exempt
@@ -58,26 +65,34 @@ def address_detail(request, pk, format=None):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
-@csrf_exempt
-def login(request, format=None):
+# def validate_token(token, github_token):
+#     try:
+#         jwt.decode(token, SECRET_PRE+github_token, algorithms='HS256')
+#     except jwt.ExpiredSignatureError:
+#         return status.HTTP_401_UNAUTHORIZED
+#     except jwt.InvalidTokenError:
+#         return status.HTTP_401_UNAUTHORIZED
+#     else:
+#         return True
 
-    if request.method == 'POST':
-        data = JSONParser().parse(request)
-        requested_name = data['name']
 
-        obj = Addresses.objects.get(name=requested_name)
+# def crete_token(github_token, email):
+#     encoded = jwt.encode({'exp': datetime.datetime.utcnow() + datetime.timedelta(
+#         seconds=300), 'email': email}, SECRET_PRE+github_token, algorithm='HS256')
+#     return encoded
 
-        if data['phone_number'] == obj.phone_number:
-            return HttpResponse(status=200)
-        else:
-            return HttpResponse(status=400)
-        # data = JSONParser().parse(request)
-        # serializer = LoginSerializer(data=data)
-        # if serializer.is_valid():
-        # requested_name = serializer.data['name']
-        # requested_phone_number = serializer.data['phone_number']
-        #     if Addresses.objects.filter(name=requested_name, phone_number=requested_phone_number) is not None:
-        #         return HttpResponse(status=status.HTTP_200_OK)
-        #     return JsonResponse(serializer.data, status=202)
+# 초간단 로그인
+# @csrf_exempt
+# def login(request, format=None):
 
-        # return JsonResponse(serializer.error, status=400)
+#     if request.method == 'POST':
+
+#         data = JSONParser().parse(request)
+#         requested_name = data['name']
+
+#         obj = Addresses.objects.get(name=requested_name)
+
+#         if data['phone_number'] == obj.phone_number:
+#             return HttpResponse(status=200)
+#         else:
+#             return HttpResponse(status=400)
