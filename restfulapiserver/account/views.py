@@ -35,11 +35,16 @@ class SignInView(View):
     def post(self, request):
         data = json.loads(request.body)
 
-        if Account.objects.filter(email=data['email']).exists():
-            user = Account.objects.get(email=data['email'])
-            if user.password == data['password']:
-                return JsonResponse({'message': f'{user.email} sign up!'}, status=200)
-            else:
-                return JsonResponse({'message': 'wrong password'}, status=200)
+        try:
+            if Account.objects.filter(email=data['email']).exists():
+                user = Account.objects.get(email=data['email'])
 
-        return JsonResponse({'message': 'not registered email'}, status=200)
+                if user.password == data['password']:
+                    return HttpResponse(status=200)
+
+                return HttpResponse(status=401)
+
+            return HttpResponse(status=400)
+
+        except KeyError:
+            return JsonResponse({"message": "INVALID_KEYS"}, status=400)
