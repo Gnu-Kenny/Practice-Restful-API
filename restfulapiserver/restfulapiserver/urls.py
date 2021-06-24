@@ -12,7 +12,7 @@ urlpatterns = [
     path('addresses/<int:pk>', address_detail),
     path('users/', users),
     path('profile/', profile),
-    path('sign', include('account.urls')),
+    path('account', include('account.urls')),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
