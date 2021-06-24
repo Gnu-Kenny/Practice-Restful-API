@@ -1,5 +1,7 @@
 import json
 
+from django.http.response import HttpResponse
+
 from .models import Account
 
 from django.views import View
@@ -14,12 +16,17 @@ class SignUpView(View):
 
     def post(self, request):
         data = json.loads(request.body)
-        Account(
-            email=data['email'],
-            password=data['password']
-        ).save()						# 받아온 데이터를 DB에 저장시켜줌
+        try:
+            if Account.objects.filter(email=data['email']).exists():
+                return HttpResponse(status=400)
+            Account(
+                email=data['email'],
+                password=data['password']
+            ).save()						# 받아온 데이터를 DB에 저장시켜줌
 
-        return JsonResponse({'message': 'successfully signed in'}, status=200)
+            return JsonResponse({'message': 'successfully signed in'}, status=200)
+        except KeyError:
+            return JsonResponse({"message": "INVALID_KEYS"}, status=400)
 
 
 # @method_decorator(csrf_exempt)
