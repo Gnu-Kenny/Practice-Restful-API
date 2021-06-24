@@ -1,4 +1,5 @@
 from django.http import HttpResponse, JsonResponse
+from rest_framework.response import Response
 from rest_framework.parsers import JSONParser
 from .models import User
 from .serializers import UserSerializer
@@ -7,8 +8,10 @@ from django.views.decorators.csrf import csrf_exempt
 # Http 통신: request / response
 
 # JWT to login
+from rest_framework.views import APIView
+
 import jwt
-from django.contrib.auth import authenticate
+from rest_framework.permissions import IsAuthenticated
 
 SECRET_PRE = "SECRET_PRE"
 
@@ -56,3 +59,18 @@ def login(request, format=None):
                              SECRET_PRE, algorithm="HS256")
         session['JWT_TOKEN'] = encoded
         return HttpResponse(status=200)
+
+
+@csrf_exempt
+def HelloView(request):
+    permission_classes = (IsAuthenticated,)
+    if request.method == "GET":
+        content = {'message': 'Hello, World!'}
+        return Response(content)
+
+# class HelloView(APIView):
+#     permission_classes = (IsAuthenticated,)
+
+#     def get(self, request):
+#         content = {'message': 'Hello, World!'}
+#         return Response(content)
